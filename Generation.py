@@ -1,14 +1,13 @@
-from Model import Model
 import random
 import math
-from Task import Task
-from Partition import Partition
+from Elements import Item
+from Elements import Bin
 class Generation:
 
 	def __init__(self):
-		self._max_num = 10000
+		self._max_time = 10000
 		self._min_num = 10
-		self._max_wcet = 100
+
 
 	def gen_kato_utilizations(self, target_val, min_val, max_val):
 		'''
@@ -25,48 +24,32 @@ class Generation:
 			vals.append(val)
 		return vals
 
-	def generate_tasks(self, target_util, leave = False, per_ratio = 0.5):
+	def generate_items(self, target_size):
 		'''
 		 
 		 Args:
-			  - target_util: Total utilization to reach.
-			  - leave: whether tasks leave or not
-			  - per_ratio: the ratio of periodic tasks.
+			  - target_util: Total size of the item set to reach.
 		'''
-		task_set =[]
-		utils = self.gen_kato_utilizations(target_util,0, 1)#generate utilizations based on the number of tasks generated
-		num = len(utils)
+		item_set =[]
+		sizes = self.gen_kato_utilizations(target_size,0, 1)#generate utilizations based on the number of tasks generated
+		num = len(sizes)
 		for i in range(num):
-			util_now = utils[i]
-			wcet = random.randint(1, self._max_wcet)
-			period = wcet/util_now
-			deadline = period
-			#arrival = -math.log(1.0 - random.random())
-			arrival = random.randint(0, 3000)
-			leaving = -1
-			if leave:
-				dice = random.random()
-				if dice>= per_ratio:
-					#leaving = -math.log(1.0 - random.random())
-					leaving = random.randint(0,3000)
-					if arrival+period > leaving:
-						leaving = arrival+period
-					#print 'arrival: '+str(arrival) +' and leaving: '+str(leaving)
-			v = random.randint(1, 5)
-			task_now = Task(i, arrival, wcet, deadline, period, v, leaving)
-			task_set.append(task_now)
-		return task_set
-	def generate_partitions(self, target_af):
+			arrival = random.randint(0, self._max_time)
+			item_now = Item(i, arrival, sizes[i])
+			item_set.append(item_now)
+		item_set = sorted(item_set, key = lambda temp: temp._arrival)
+		return item_set
+	def generate_bins(self, target_size):
 		'''
 		 
 		 Args:
 			  - `target_af`: Total af of all partitions to reach.
 		'''
-		partition_set = {}
-		afs = self.gen_kato_utilizations(target_af,0, 1)#generate utilizations based on the number of tasks generated
-		num = len(afs)
+		bin_set = []
+		sizes = self.gen_kato_utilizations(target_size,0, 1)#generate utilizations based on the number of tasks generated
+		num = len(sizes)
 		for i in range(num):
-			partition_now = Partition(i, afs[i])#only generates regular partitions
+			bin_now = Bin(i, sizes[i])#only generates regular partitions
 			#print afs[i]
-			partition_set[i] = partition_now
-		return partition_set
+			bin_set.append(bin_now)
+		return bin_set

@@ -6,12 +6,15 @@ from Scheduler import Scheduler
 import numpy as np
 class TMSimEnv:
 	def __init__(self):
-		self._partition_list = []
+		self._partition_list = {}
 		self._load_ratio = 0
 		self._task_list = []
 		self._state_size = 0
 		self._action_size = 0
 		self._total_af = 0
+		g = Generation()
+		self._partition_list = g.generate_partitions(20)
+		self.make(self._partition_list, 0.6)
 
 	#make is the initiliazation given by the user, the partition list is given, if no load ratio is given, then randomly generate one
 	def make(self,partitions, load_ratio = -1):

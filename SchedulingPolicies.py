@@ -1,5 +1,4 @@
-from Task import Task
-from Partition import Partition
+from Elements import *
 class SchedulingPolicies:
 
 	'''
@@ -9,15 +8,13 @@ class SchedulingPolicies:
 	2. worst_fit
 	3. first_fit
 	'''
-	def best_fit(self, task, partition_dict):
+	def best_fit(self, item, bin_set):
 		#calculate the partition that the task best fits
 		#print 'Best_Fit invoked'
 		p_id = -1
 		closest_gap = -1
-		sum_af = 0
-		for _, p in partition_dict.items():
-			gap_now = p._af_remain - task._utilization
-			sum_af += p._af_remain
+		for p in bin_set:
+			gap_now = p._capacity - item._size
 			if gap_now<0:
 				continue
 			if closest_gap<0 or gap_now<closest_gap:
@@ -29,6 +26,8 @@ class SchedulingPolicies:
 			return p_id
 		#print 'Inside scheduling for BF: '+str(partition_dict[p_id]._af_remain)
 		return p_id 
+
+	'''
 	def worst_fit(self, task, partition_dict):
 		#return id of the partition that the task fits worst
 		p_id = -1
@@ -106,6 +105,7 @@ class SchedulingPolicies:
 				return p_id
 			else:
 				return -1
+		'''
 	'''def DABF_test(self, task, partition_dict):
 		candidate_set = {}
 		closest_gap = -1
